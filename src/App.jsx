@@ -229,8 +229,5 @@ function App() {
     </BrowserRouter>
   );
 }
-
- HEAD
 export default App;
 
-export default App;
