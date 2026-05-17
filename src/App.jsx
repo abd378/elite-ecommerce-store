@@ -27,7 +27,10 @@ function App() {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    if (savedUser) setUser(JSON.parse(savedUser));
+
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
   }, []);
 
   useEffect(() => {
@@ -36,29 +39,32 @@ function App() {
 
   const isAdmin = user && user.role === "admin";
 
-  const enableSound = () => {
-    const audio = new Audio("/notification.wav");
-    audio.volume = 1;
+  const enableSound = async () => {
+    try {
+      const audio = new Audio("/notification.mp3");
 
-    audio
-      .play()
-      .then(() => {
-        setSoundEnabled(true);
-        toast.success("Notification sound enabled");
-      })
-      .catch(() => {
-        toast.error("Click again to enable sound");
-      });
+      audio.volume = 1;
+
+      await audio.play();
+
+      setSoundEnabled(true);
+
+      toast.success("🔊 Notification sound enabled");
+    } catch (error) {
+      console.log(error);
+      toast.error("Browser blocked sound");
+    }
   };
 
   const playNotificationSound = () => {
     if (!soundEnabled) return;
 
-    const audio = new Audio("/notification.wav");
+    const audio = new Audio("/notification.mp3");
+
     audio.volume = 1;
 
     audio.play().catch((err) => {
-      console.log("Sound blocked:", err);
+      console.log(err);
     });
   };
 
@@ -66,7 +72,7 @@ function App() {
     if (!isAdmin) return;
 
     const channel = supabase
-      .channel("admin-orders-notifications")
+      .channel("admin-orders-channel")
       .on(
         "postgres_changes",
         {
@@ -76,8 +82,10 @@ function App() {
         },
         () => {
           setAdminNotifications((prev) => prev + 1);
+
           playNotificationSound();
-          toast.success("🔔 New order received!");
+
+          toast.success("🔔 New Order Received!");
         }
       )
       .subscribe();
@@ -89,52 +97,64 @@ function App() {
 
   const addToCart = (product) => {
     if (!user) {
-      toast.error("Please login first to shop");
+      toast.error("Please login first");
       return;
     }
 
-    const existingProduct = cart.find((item) => item.id === product.id);
+    const existingProduct = cart.find(
+      (item) => item.id === product.id
+    );
 
     if (existingProduct) {
       setCart(
         cart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+              }
             : item
         )
       );
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([
+        ...cart,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ]);
     }
 
     toast.success(`${product.name} added to cart`);
   };
 
-  const removeFromCart = (productId) => {
-    const removedProduct = cart.find((item) => item.id === productId);
-    setCart(cart.filter((item) => item.id !== productId));
-
-    if (removedProduct) {
-      toast.error(`${removedProduct.name} removed from cart`);
-    }
+  const removeFromCart = (id) => {
+    setCart(cart.filter((item) => item.id !== id));
   };
 
-  const increaseQuantity = (productId) => {
+  const increaseQuantity = (id) => {
     setCart(
       cart.map((item) =>
-        item.id === productId
-          ? { ...item, quantity: item.quantity + 1 }
+        item.id === id
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
           : item
       )
     );
   };
 
-  const decreaseQuantity = (productId) => {
+  const decreaseQuantity = (id) => {
     setCart(
       cart
         .map((item) =>
-          item.id === productId
-            ? { ...item, quantity: item.quantity - 1 }
+          item.id === id
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
             : item
         )
         .filter((item) => item.quantity > 0)
@@ -150,17 +170,16 @@ function App() {
     await supabase.auth.signOut();
 
     localStorage.removeItem("user");
-    localStorage.removeItem("cart");
 
     setUser(null);
-    setCart([]);
-    setAdminNotifications(0);
-    setSoundEnabled(false);
 
-    toast.success("Logged out successfully");
+    toast.success("Logged out");
   };
 
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartCount = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   return (
     <BrowserRouter>
@@ -171,19 +190,29 @@ function App() {
           <h1>CodeAlpha Store</h1>
 
           <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/products">Products</Link></li>
-            <li><Link to="/cart">Cart</Link></li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+
+            <li>
+              <Link to="/products">Products</Link>
+            </li>
+
+            <li>
+              <Link to="/cart">Cart</Link>
+            </li>
 
             {isAdmin && (
               <>
                 <li>
                   <Link
                     to="/admin-orders"
-                    className="admin-link"
-                    onClick={() => setAdminNotifications(0)}
+                    onClick={() =>
+                      setAdminNotifications(0)
+                    }
                   >
                     Orders
+
                     {adminNotifications > 0 && (
                       <span className="notification-badge">
                         {adminNotifications}
@@ -192,14 +221,11 @@ function App() {
                   </Link>
                 </li>
 
-                <li><Link to="/admin-products">Products Admin</Link></li>
-              </>
-            )}
-
-            {!user && (
-              <>
-                <li><Link to="/login">Login</Link></li>
-                <li><Link to="/register">Register</Link></li>
+                <li>
+                  <Link to="/admin-products">
+                    Products Admin
+                  </Link>
+                </li>
               </>
             )}
           </ul>
@@ -214,37 +240,68 @@ function App() {
                 <span>{user.name}</span>
 
                 {isAdmin && (
-                  <button onClick={enableSound} className="cart-btn">
-                    {soundEnabled ? "Sound On" : "Enable Sound"}
+                  <button
+                    onClick={enableSound}
+                    className="cart-btn"
+                    style={{
+                      marginLeft: "10px",
+                      background: soundEnabled
+                        ? "linear-gradient(135deg,#00c853,#64dd17)"
+                        : "linear-gradient(135deg,#ff9800,#ff5722)",
+                    }}
+                  >
+                    {soundEnabled
+                      ? "🔊 Sound On"
+                      : "🔔 Enable Sound"}
                   </button>
                 )}
 
-                <button onClick={logout} className="logout-btn">
+                <button
+                  onClick={logout}
+                  className="logout-btn"
+                >
                   Logout
                 </button>
               </div>
             ) : (
-              <Link to="/login">
-                <button className="cart-btn">Login First</button>
-              </Link>
+              <>
+                <Link to="/login">
+                  <button className="cart-btn">
+                    Login
+                  </button>
+                </Link>
+
+                <Link to="/register">
+                  <button className="cart-btn">
+                    Register
+                  </button>
+                </Link>
+              </>
             )}
 
             <Link to="/cart">
-              <button className="cart-btn">Cart ({cartCount})</button>
+              <button className="cart-btn">
+                Cart ({cartCount})
+              </button>
             </Link>
           </div>
         </nav>
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products addToCart={addToCart} />} />
+
+          <Route
+            path="/products"
+            element={
+              <Products addToCart={addToCart} />
+            }
+          />
 
           <Route
             path="/cart"
             element={
               <Cart
                 cart={cart}
-                user={user}
                 removeFromCart={removeFromCart}
                 increaseQuantity={increaseQuantity}
                 decreaseQuantity={decreaseQuantity}
@@ -253,41 +310,42 @@ function App() {
             }
           />
 
-          <Route path="/login" element={<Login setUser={setUser} />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/product" element={<ProductDetails />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route
+            path="/login"
+            element={<Login setUser={setUser} />}
+          />
 
           <Route
-            path="/admin-orders"
+            path="/register"
+            element={<Register />}
+          />
+
+          <Route
+            path="/product/:id"
             element={
-              isAdmin ? (
-                <AdminOrders />
-              ) : (
-                <div className="cart-page">
-                  <div className="cart-box">
-                    <h2>Access Denied</h2>
-                    <p>Only admin can view this page.</p>
-                  </div>
-                </div>
-              )
+              <ProductDetails addToCart={addToCart} />
             }
           />
 
           <Route
-            path="/admin-products"
+            path="/checkout"
             element={
-              isAdmin ? (
-                <AdminProducts />
-              ) : (
-                <div className="cart-page">
-                  <div className="cart-box">
-                    <h2>Access Denied</h2>
-                    <p>Only admin can view this page.</p>
-                  </div>
-                </div>
-              )
+              <Checkout
+                cart={cart}
+                clearCart={clearCart}
+                user={user}
+              />
             }
+          />
+
+          <Route
+            path="/admin-orders"
+            element={<AdminOrders />}
+          />
+
+          <Route
+            path="/admin-products"
+            element={<AdminProducts />}
           />
         </Routes>
       </div>
