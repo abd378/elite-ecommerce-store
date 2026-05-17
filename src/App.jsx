@@ -37,8 +37,7 @@ function App() {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const isAdmin =
-    user?.email === "abedtt5527@gmail.com";
+ const isAdmin = true;
 
   const enableSound = async () => {
     try {
