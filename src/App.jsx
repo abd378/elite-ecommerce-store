@@ -43,3 +43,5 @@ const playNotificationSound = () => {
     console.log(err);
   }
 };
+
+export default App;
