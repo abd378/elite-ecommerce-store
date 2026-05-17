@@ -27,36 +27,46 @@ function App() {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    if (savedUser) setUser(JSON.parse(savedUser));
+
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
   }, []);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  const isAdmin = user && user.role === "admin";
+  const isAdmin =
+    user?.email === "abedtt5527@gmail.com";
 
-  const enableSound = () => {
-    const audio = new Audio("/notification.mp3");
-    audio.volume = 1;
+  const enableSound = async () => {
+    try {
+      const audio = new Audio("/notification.mp3");
 
-    audio
-      .play()
-      .then(() => {
-        setSoundEnabled(true);
-        toast.success("🔊 Sound enabled");
-      })
-      .catch(() => {
-        toast.error("Browser blocked sound");
-      });
+      audio.volume = 1;
+
+      await audio.play();
+
+      setSoundEnabled(true);
+
+      toast.success("🔊 Sound Enabled");
+    } catch (error) {
+      console.log(error);
+      toast.error("Browser blocked sound");
+    }
   };
 
   const playNotificationSound = () => {
     if (!soundEnabled) return;
 
     const audio = new Audio("/notification.mp3");
+
     audio.volume = 1;
-    audio.play().catch((err) => console.log(err));
+
+    audio.play().catch((err) => {
+      console.log(err);
+    });
   };
 
   useEffect(() => {
@@ -73,7 +83,9 @@ function App() {
         },
         () => {
           setAdminNotifications((prev) => prev + 1);
+
           playNotificationSound();
+
           toast.success("🔔 New Order Received!");
         }
       )
@@ -90,18 +102,29 @@ function App() {
       return;
     }
 
-    const existing = cart.find((item) => item.id === product.id);
+    const existing = cart.find(
+      (item) => item.id === product.id
+    );
 
     if (existing) {
       setCart(
         cart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+              }
             : item
         )
       );
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([
+        ...cart,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ]);
     }
 
     toast.success(`${product.name} added to cart`);
@@ -114,7 +137,12 @@ function App() {
   const increaseQuantity = (id) => {
     setCart(
       cart.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === id
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item
       )
     );
   };
@@ -123,7 +151,12 @@ function App() {
     setCart(
       cart
         .map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+          item.id === id
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
+            : item
         )
         .filter((item) => item.quantity > 0)
     );
@@ -136,6 +169,7 @@ function App() {
 
   const logout = async () => {
     await supabase.auth.signOut();
+
     localStorage.removeItem("user");
     localStorage.removeItem("cart");
 
@@ -147,7 +181,10 @@ function App() {
     toast.success("Logged out");
   };
 
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   return (
     <BrowserRouter>
@@ -158,19 +195,29 @@ function App() {
           <h1>CodeAlpha Store</h1>
 
           <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/products">Products</Link></li>
-            <li><Link to="/cart">Cart</Link></li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+
+            <li>
+              <Link to="/products">Products</Link>
+            </li>
+
+            <li>
+              <Link to="/cart">Cart</Link>
+            </li>
 
             {isAdmin && (
               <>
                 <li>
                   <Link
                     to="/admin-orders"
-                    className="admin-link"
-                    onClick={() => setAdminNotifications(0)}
+                    onClick={() =>
+                      setAdminNotifications(0)
+                    }
                   >
                     Orders
+
                     {adminNotifications > 0 && (
                       <span className="notification-badge">
                         {adminNotifications}
@@ -179,7 +226,11 @@ function App() {
                   </Link>
                 </li>
 
-                <li><Link to="/admin-products">Products Admin</Link></li>
+                <li>
+                  <Link to="/admin-products">
+                    Products Admin
+                  </Link>
+                </li>
               </>
             )}
           </ul>
@@ -201,41 +252,56 @@ function App() {
                       padding: "10px 14px",
                       border: "none",
                       borderRadius: "10px",
-                      background: soundEnabled ? "green" : "orange",
+                      background: "orange",
                       color: "white",
                       fontWeight: "bold",
                       cursor: "pointer",
                     }}
                   >
-                    {soundEnabled ? "🔊 Sound On" : "🔔 Enable Sound"}
+                    🔔 Enable Sound
                   </button>
                 )}
 
-                <button onClick={logout} className="logout-btn">
+                <button
+                  onClick={logout}
+                  className="logout-btn"
+                >
                   Logout
                 </button>
               </div>
             ) : (
               <>
                 <Link to="/login">
-                  <button className="cart-btn">Login</button>
+                  <button className="cart-btn">
+                    Login
+                  </button>
                 </Link>
 
                 <Link to="/register">
-                  <button className="cart-btn">Register</button>
+                  <button className="cart-btn">
+                    Register
+                  </button>
                 </Link>
               </>
             )}
 
             <Link to="/cart">
-              <button className="cart-btn">Cart ({cartCount})</button>
+              <button className="cart-btn">
+                Cart ({cartCount})
+              </button>
             </Link>
           </div>
         </nav>
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products addToCart={addToCart} />} />
+
+          <Route
+            path="/products"
+            element={
+              <Products addToCart={addToCart} />
+            }
+          />
 
           <Route
             path="/cart"
@@ -251,20 +317,42 @@ function App() {
             }
           />
 
-          <Route path="/login" element={<Login setUser={setUser} />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/product" element={<ProductDetails />} />
-          <Route path="/product/:id" element={<ProductDetails addToCart={addToCart} />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route
+            path="/login"
+            element={<Login setUser={setUser} />}
+          />
+
+          <Route
+            path="/register"
+            element={<Register />}
+          />
+
+          <Route
+            path="/product/:id"
+            element={
+              <ProductDetails addToCart={addToCart} />
+            }
+          />
+
+          <Route
+            path="/checkout"
+            element={
+              <Checkout
+                cart={cart}
+                clearCart={clearCart}
+                user={user}
+              />
+            }
+          />
 
           <Route
             path="/admin-orders"
-            element={isAdmin ? <AdminOrders /> : <h2>Access Denied</h2>}
+            element={<AdminOrders />}
           />
 
           <Route
             path="/admin-products"
-            element={isAdmin ? <AdminProducts /> : <h2>Access Denied</h2>}
+            element={<AdminProducts />}
           />
         </Routes>
       </div>
