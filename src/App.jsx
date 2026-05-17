@@ -27,9 +27,7 @@ function App() {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
   useEffect(() => {
@@ -39,35 +37,29 @@ function App() {
   const isAdmin = user && user.role === "admin";
 
   const enableSound = () => {
-    const audio = document.getElementById("notificationSound");
+    const audio = new Audio("/notification.wav");
+    audio.volume = 1;
 
-    if (audio) {
-      audio
-        .play()
-        .then(() => {
-          audio.pause();
-          audio.currentTime = 0;
-          setSoundEnabled(true);
-          toast.success("Notification sound enabled");
-        })
-        .catch((err) => {
-          console.log(err);
-          toast.error("Click again to enable sound");
-        });
-    }
+    audio
+      .play()
+      .then(() => {
+        setSoundEnabled(true);
+        toast.success("Notification sound enabled");
+      })
+      .catch(() => {
+        toast.error("Click again to enable sound");
+      });
   };
 
   const playNotificationSound = () => {
     if (!soundEnabled) return;
 
-    const audio = document.getElementById("notificationSound");
+    const audio = new Audio("/notification.wav");
+    audio.volume = 1;
 
-    if (audio) {
-      audio.currentTime = 0;
-      audio.play().catch((err) => {
-        console.log("Sound blocked:", err);
-      });
-    }
+    audio.play().catch((err) => {
+      console.log("Sound blocked:", err);
+    });
   };
 
   useEffect(() => {
@@ -175,10 +167,6 @@ function App() {
       <Toaster position="top-right" />
 
       <div className="app">
-        <audio id="notificationSound" preload="auto">
-          <source src="/notification.wav" type="audio/wav" />
-        </audio>
-
         <nav className="navbar">
           <h1>CodeAlpha Store</h1>
 
@@ -249,11 +237,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
-
-          <Route
-            path="/products"
-            element={<Products addToCart={addToCart} />}
-          />
+          <Route path="/products" element={<Products addToCart={addToCart} />} />
 
           <Route
             path="/cart"
