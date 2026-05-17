@@ -22,6 +22,7 @@ function App() {
   });
 
   const [user, setUser] = useState(null);
+  const [adminNotifications, setAdminNotifications] = useState(0);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -36,6 +37,36 @@ function App() {
   }, [cart]);
 
   const isAdmin = user && user.role === "admin";
+
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const channel = supabase
+      .channel("admin-orders-notifications")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "orders",
+        },
+        () => {
+          setAdminNotifications((prev) => prev + 1);
+
+          const audio = new Audio(
+            "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+          );
+          audio.play().catch(() => {});
+
+          toast.success("🔔 New order received!");
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [isAdmin]);
 
   const addToCart = (product) => {
     if (!user) {
@@ -62,7 +93,6 @@ function App() {
 
   const removeFromCart = (productId) => {
     const removedProduct = cart.find((item) => item.id === productId);
-
     setCart(cart.filter((item) => item.id !== productId));
 
     if (removedProduct) {
@@ -105,6 +135,7 @@ function App() {
 
     setUser(null);
     setCart([]);
+    setAdminNotifications(0);
 
     toast.success("Logged out successfully");
   };
@@ -126,7 +157,21 @@ function App() {
 
             {isAdmin && (
               <>
-                <li><Link to="/admin-orders">Orders</Link></li>
+                <li>
+                  <Link
+                    to="/admin-orders"
+                    className="admin-link"
+                    onClick={() => setAdminNotifications(0)}
+                  >
+                    Orders
+                    {adminNotifications > 0 && (
+                      <span className="notification-badge">
+                        {adminNotifications}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+
                 <li><Link to="/admin-products">Products Admin</Link></li>
               </>
             )}
@@ -159,9 +204,7 @@ function App() {
             )}
 
             <Link to="/cart">
-              <button className="cart-btn">
-                Cart ({cartCount})
-              </button>
+              <button className="cart-btn">Cart ({cartCount})</button>
             </Link>
           </div>
         </nav>
@@ -229,4 +272,5 @@ function App() {
     </BrowserRouter>
   );
 }
+
 export default App;
