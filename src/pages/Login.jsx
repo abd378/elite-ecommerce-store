@@ -19,22 +19,17 @@ function Login({ setUser }) {
       return;
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("id, name, email, role")
-      .eq("id", data.user.id)
-      .single();
-
-    if (profileError || !profile) {
-      toast.error("Profile not found");
-      return;
-    }
-
     const loggedUser = {
       id: data.user.id,
-      name: profile.name || "User",
+      name:
+        data.user.email === "abedtt5527@gmail.com"
+          ? "Admin"
+          : "User",
       email: data.user.email,
-      role: profile.role || "user",
+      role:
+        data.user.email === "abedtt5527@gmail.com"
+          ? "admin"
+          : "user",
     };
 
     localStorage.setItem("user", JSON.stringify(loggedUser));
