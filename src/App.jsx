@@ -37,7 +37,8 @@ function App() {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
- const isAdmin = user?.email === "abedtt5527@gmail.com";
+  const isAdmin =
+    user?.email === "abedtt5527@gmail.com";
 
   const enableSound = async () => {
     try {
@@ -240,23 +241,26 @@ function App() {
                 <div className="profile-icon">
                   {user.name.charAt(0).toUpperCase()}
                 </div>
-<span>{user.name}</span>
 
-<button
-  onClick={enableSound}
-  style={{
-    marginLeft: "10px",
-    padding: "10px 14px",
-    border: "none",
-    borderRadius: "10px",
-    background: "orange",
-    color: "white",
-    fontWeight: "bold",
-    cursor: "pointer",
-  }}
->
-  🔔 Enable Sound
-</button>
+                <span>{user.name}</span>
+
+                {isAdmin && (
+                  <button
+                    onClick={enableSound}
+                    style={{
+                      marginLeft: "10px",
+                      padding: "10px 14px",
+                      border: "none",
+                      borderRadius: "10px",
+                      background: "orange",
+                      color: "white",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                    }}
+                  >
+                    🔔 Enable Sound
+                  </button>
+                )}
 
                 <button
                   onClick={logout}
@@ -288,27 +292,7 @@ function App() {
             </Link>
           </div>
         </nav>
-{isAdmin && (
-  <button
-    onClick={enableSound}
-    style={{
-      position: "fixed",
-      bottom: "25px",
-      right: "25px",
-      zIndex: 99999,
-      padding: "14px 20px",
-      border: "none",
-      borderRadius: "50px",
-      background: "orange",
-      color: "white",
-      fontWeight: "bold",
-      cursor: "pointer",
-      boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-    }}
-  >
-    🔔 Enable Sound
-  </button>
-)}
+
         <Routes>
           <Route path="/" element={<Home />} />
 
