@@ -53,10 +53,15 @@ function App() {
         () => {
           setAdminNotifications((prev) => prev + 1);
 
-          const audio = new Audio(
-            "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
-          );
-          audio.play().catch(() => {});
+          const audio = new Audio("/notification.mp3");
+
+audio.volume = 1;
+
+audio.play().then(() => {
+  console.log("sound played");
+}).catch((err) => {
+  console.log(err);
+});
 
           toast.success("🔔 New order received!");
         }
