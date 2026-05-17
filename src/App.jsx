@@ -27,10 +27,7 @@ function App() {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
+    if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
   useEffect(() => {
@@ -39,32 +36,30 @@ function App() {
 
   const isAdmin = user && user.role === "admin";
 
-  const enableSound = async () => {
-    try {
-      const audio = new Audio("/notification.mp3");
+  const enableSound = () => {
+    const audio = new Audio("/notification.mp3");
+    audio.volume = 1;
 
-      audio.volume = 1;
-
-      await audio.play();
-
-      setSoundEnabled(true);
-
-      toast.success("🔊 Notification sound enabled");
-    } catch (error) {
-      console.log(error);
-      toast.error("Browser blocked sound");
-    }
+    audio
+      .play()
+      .then(() => {
+        setSoundEnabled(true);
+        toast.success("🔊 Notification sound enabled");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Browser blocked sound");
+      });
   };
 
   const playNotificationSound = () => {
     if (!soundEnabled) return;
 
     const audio = new Audio("/notification.mp3");
-
     audio.volume = 1;
 
     audio.play().catch((err) => {
-      console.log(err);
+      console.log("Sound blocked:", err);
     });
   };
 
@@ -82,9 +77,7 @@ function App() {
         },
         () => {
           setAdminNotifications((prev) => prev + 1);
-
           playNotificationSound();
-
           toast.success("🔔 New Order Received!");
         }
       )
@@ -101,29 +94,18 @@ function App() {
       return;
     }
 
-    const existingProduct = cart.find(
-      (item) => item.id === product.id
-    );
+    const existingProduct = cart.find((item) => item.id === product.id);
 
     if (existingProduct) {
       setCart(
         cart.map((item) =>
           item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-              }
+            ? { ...item, quantity: item.quantity + 1 }
             : item
         )
       );
     } else {
-      setCart([
-        ...cart,
-        {
-          ...product,
-          quantity: 1,
-        },
-      ]);
+      setCart([...cart, { ...product, quantity: 1 }]);
     }
 
     toast.success(`${product.name} added to cart`);
@@ -136,12 +118,7 @@ function App() {
   const increaseQuantity = (id) => {
     setCart(
       cart.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
   };
@@ -150,12 +127,7 @@ function App() {
     setCart(
       cart
         .map((item) =>
-          item.id === id
-            ? {
-                ...item,
-                quantity: item.quantity - 1,
-              }
-            : item
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
         )
         .filter((item) => item.quantity > 0)
     );
@@ -168,18 +140,18 @@ function App() {
 
   const logout = async () => {
     await supabase.auth.signOut();
-
     localStorage.removeItem("user");
+    localStorage.removeItem("cart");
 
     setUser(null);
+    setCart([]);
+    setAdminNotifications(0);
+    setSoundEnabled(false);
 
     toast.success("Logged out");
   };
 
-  const cartCount = cart.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <BrowserRouter>
@@ -190,29 +162,19 @@ function App() {
           <h1>CodeAlpha Store</h1>
 
           <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-
-            <li>
-              <Link to="/products">Products</Link>
-            </li>
-
-            <li>
-              <Link to="/cart">Cart</Link>
-            </li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/products">Products</Link></li>
+            <li><Link to="/cart">Cart</Link></li>
 
             {isAdmin && (
               <>
                 <li>
                   <Link
                     to="/admin-orders"
-                    onClick={() =>
-                      setAdminNotifications(0)
-                    }
+                    className="admin-link"
+                    onClick={() => setAdminNotifications(0)}
                   >
                     Orders
-
                     {adminNotifications > 0 && (
                       <span className="notification-badge">
                         {adminNotifications}
@@ -221,11 +183,7 @@ function App() {
                   </Link>
                 </li>
 
-                <li>
-                  <Link to="/admin-products">
-                    Products Admin
-                  </Link>
-                </li>
+                <li><Link to="/admin-products">Products Admin</Link></li>
               </>
             )}
           </ul>
@@ -250,39 +208,28 @@ function App() {
                         : "linear-gradient(135deg,#ff9800,#ff5722)",
                     }}
                   >
-                    {soundEnabled
-                      ? "🔊 Sound On"
-                      : "🔔 Enable Sound"}
+                    {soundEnabled ? "🔊 Sound On" : "🔔 Enable Sound"}
                   </button>
                 )}
 
-                <button
-                  onClick={logout}
-                  className="logout-btn"
-                >
+                <button onClick={logout} className="logout-btn">
                   Logout
                 </button>
               </div>
             ) : (
               <>
                 <Link to="/login">
-                  <button className="cart-btn">
-                    Login
-                  </button>
+                  <button className="cart-btn">Login</button>
                 </Link>
 
                 <Link to="/register">
-                  <button className="cart-btn">
-                    Register
-                  </button>
+                  <button className="cart-btn">Register</button>
                 </Link>
               </>
             )}
 
             <Link to="/cart">
-              <button className="cart-btn">
-                Cart ({cartCount})
-              </button>
+              <button className="cart-btn">Cart ({cartCount})</button>
             </Link>
           </div>
         </nav>
@@ -292,9 +239,7 @@ function App() {
 
           <Route
             path="/products"
-            element={
-              <Products addToCart={addToCart} />
-            }
+            element={<Products addToCart={addToCart} />}
           />
 
           <Route
@@ -302,6 +247,7 @@ function App() {
             element={
               <Cart
                 cart={cart}
+                user={user}
                 removeFromCart={removeFromCart}
                 increaseQuantity={increaseQuantity}
                 decreaseQuantity={decreaseQuantity}
@@ -310,42 +256,41 @@ function App() {
             }
           />
 
-          <Route
-            path="/login"
-            element={<Login setUser={setUser} />}
-          />
-
-          <Route
-            path="/register"
-            element={<Register />}
-          />
-
-          <Route
-            path="/product/:id"
-            element={
-              <ProductDetails addToCart={addToCart} />
-            }
-          />
-
-          <Route
-            path="/checkout"
-            element={
-              <Checkout
-                cart={cart}
-                clearCart={clearCart}
-                user={user}
-              />
-            }
-          />
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/product" element={<ProductDetails />} />
+          <Route path="/checkout" element={<Checkout />} />
 
           <Route
             path="/admin-orders"
-            element={<AdminOrders />}
+            element={
+              isAdmin ? (
+                <AdminOrders />
+              ) : (
+                <div className="cart-page">
+                  <div className="cart-box">
+                    <h2>Access Denied</h2>
+                    <p>Only admin can view this page.</p>
+                  </div>
+                </div>
+              )
+            }
           />
 
           <Route
             path="/admin-products"
-            element={<AdminProducts />}
+            element={
+              isAdmin ? (
+                <AdminProducts />
+              ) : (
+                <div className="cart-page">
+                  <div className="cart-box">
+                    <h2>Access Denied</h2>
+                    <p>Only admin can view this page.</p>
+                  </div>
+                </div>
+              )
+            }
           />
         </Routes>
       </div>
