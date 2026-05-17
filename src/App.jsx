@@ -23,6 +23,7 @@ function App() {
 
   const [user, setUser] = useState(null);
   const [adminNotifications, setAdminNotifications] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(false);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -38,6 +39,32 @@ function App() {
 
   const isAdmin = user && user.role === "admin";
 
+  const enableSound = async () => {
+    try {
+      const audio = new Audio("/notification.wav");
+      audio.volume = 1;
+      await audio.play();
+      setSoundEnabled(true);
+      toast.success("Notification sound enabled");
+    } catch (error) {
+      toast.error("Please allow sound from browser");
+      console.log(error);
+    }
+  };
+
+  const playNotificationSound = async () => {
+    if (!soundEnabled) return;
+
+    try {
+      const audio = new Audio("/notification.mp3");
+      audio.preload = "auto";
+      audio.volume = 1;
+      await audio.play();
+    } catch (error) {
+      console.log("Sound blocked:", error);
+    }
+  };
+
   useEffect(() => {
     if (!isAdmin) return;
 
@@ -52,17 +79,7 @@ function App() {
         },
         () => {
           setAdminNotifications((prev) => prev + 1);
-
-          const audio = new Audio("/notification.mp3");
-
-audio.volume = 1;
-
-audio.play().then(() => {
-  console.log("sound played");
-}).catch((err) => {
-  console.log(err);
-});
-
+          playNotificationSound();
           toast.success("🔔 New order received!");
         }
       )
@@ -71,7 +88,7 @@ audio.play().then(() => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [isAdmin]);
+  }, [isAdmin, soundEnabled]);
 
   const addToCart = (product) => {
     if (!user) {
@@ -141,6 +158,7 @@ audio.play().then(() => {
     setUser(null);
     setCart([]);
     setAdminNotifications(0);
+    setSoundEnabled(false);
 
     toast.success("Logged out successfully");
   };
@@ -197,6 +215,12 @@ audio.play().then(() => {
                 </div>
 
                 <span>{user.name}</span>
+
+                {isAdmin && (
+                  <button onClick={enableSound} className="cart-btn">
+                    {soundEnabled ? "Sound On" : "Enable Sound"}
+                  </button>
+                )}
 
                 <button onClick={logout} className="logout-btn">
                   Logout
