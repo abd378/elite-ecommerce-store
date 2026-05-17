@@ -19,12 +19,10 @@ function Login({ setUser }) {
       return;
     }
 
-    const userId = data.user.id;
-
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("id, name, email, role")
-      .eq("id", userId)
+      .eq("id", data.user.id)
       .single();
 
     if (profileError || !profile) {
@@ -39,8 +37,8 @@ function Login({ setUser }) {
       role: profile.role || "user",
     };
 
-    setUser(loggedUser);
     localStorage.setItem("user", JSON.stringify(loggedUser));
+    setUser(loggedUser);
 
     toast.success(`Login successful as ${loggedUser.role}`);
 
