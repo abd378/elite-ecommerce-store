@@ -27,7 +27,6 @@ function App() {
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
-
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
@@ -39,29 +38,35 @@ function App() {
 
   const isAdmin = user && user.role === "admin";
 
-  const enableSound = async () => {
-    try {
-      const audio = new Audio("/notification.wav");
-      audio.volume = 1;
-      await audio.play();
-      setSoundEnabled(true);
-      toast.success("Notification sound enabled");
-    } catch (error) {
-      toast.error("Please allow sound from browser");
-      console.log(error);
+  const enableSound = () => {
+    const audio = document.getElementById("notificationSound");
+
+    if (audio) {
+      audio
+        .play()
+        .then(() => {
+          audio.pause();
+          audio.currentTime = 0;
+          setSoundEnabled(true);
+          toast.success("Notification sound enabled");
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Click again to enable sound");
+        });
     }
   };
 
-  const playNotificationSound = async () => {
+  const playNotificationSound = () => {
     if (!soundEnabled) return;
 
-    try {
-      const audio = new Audio("/notification.mp3");
-      audio.preload = "auto";
-      audio.volume = 1;
-      await audio.play();
-    } catch (error) {
-      console.log("Sound blocked:", error);
+    const audio = document.getElementById("notificationSound");
+
+    if (audio) {
+      audio.currentTime = 0;
+      audio.play().catch((err) => {
+        console.log("Sound blocked:", err);
+      });
     }
   };
 
@@ -170,6 +175,10 @@ function App() {
       <Toaster position="top-right" />
 
       <div className="app">
+        <audio id="notificationSound" preload="auto">
+          <source src="/notification.wav" type="audio/wav" />
+        </audio>
+
         <nav className="navbar">
           <h1>CodeAlpha Store</h1>
 
