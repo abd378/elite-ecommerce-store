@@ -1,6 +1,21 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 function Checkout() {
+  useEffect(() => {
+    const sendNotification = async () => {
+      try {
+        await fetch("/api/send-order-notification", {
+          method: "POST",
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    sendNotification();
+  }, []);
+
   return (
     <div className="checkout-page">
       <div className="checkout-card">
