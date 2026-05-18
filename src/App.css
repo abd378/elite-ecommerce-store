@@ -1546,3 +1546,101 @@ button:hover,
     display: none;
   }
 }
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .navbar {
+    position: fixed;
+    top: auto;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    margin: 0;
+    padding: 12px;
+    border-radius: 28px;
+    z-index: 9999;
+    flex-direction: column;
+  }
+
+  .navbar h1 {
+    display: none;
+  }
+
+  .navbar ul {
+    width: 100%;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .navbar li a {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .nav-actions {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cart-btn,
+  .logout-btn,
+  button {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .nexus-home,
+  .products-section,
+  .cart-page,
+  .login-page,
+  .admin-page,
+  .details-page,
+  .checkout-page {
+    padding: 40px 16px 160px;
+  }
+
+  .nexus-hero-card {
+    padding: 32px 20px;
+    border-radius: 28px;
+  }
+
+  .nexus-hero-card h1 {
+    font-size: 42px;
+    letter-spacing: -1px;
+  }
+
+  .nexus-hero-card p {
+    font-size: 16px;
+  }
+
+  .products-grid,
+  .orders-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .product-card img {
+    height: 210px;
+  }
+
+  .activity-feed,
+  .xp-system {
+    display: none;
+  }
+
+  .nexus-ai-panel {
+    width: calc(100% - 24px);
+    right: 12px;
+    bottom: 96px;
+    height: 500px;
+  }
+
+  .nexus-ai-button {
+    right: 18px;
+    bottom: 100px;
+  }
+}
