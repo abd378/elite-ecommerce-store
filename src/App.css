@@ -279,8 +279,103 @@ button:hover,
 }
 
 .product-card {
-  padding: 18px;
-  transition: 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
+  border-radius: 28px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+
+  backdrop-filter: blur(18px);
+
+  transform-style: preserve-3d;
+
+  transition:
+    transform 0.45s ease,
+    box-shadow 0.45s ease,
+    border 0.45s ease;
+
+  box-shadow:
+    0 10px 35px rgba(0,0,0,0.35);
+
+  cursor: pointer;
+}
+
+.product-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: -120%;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent,
+      rgba(0,229,255,0.18),
+      transparent
+    );
+
+  transform: rotate(25deg);
+
+  transition: 0.7s;
+}
+
+.product-card:hover::before {
+  inset: 120%;
+}
+
+.product-card:hover {
+  transform:
+    perspective(1200px)
+    rotateX(6deg)
+    rotateY(-6deg)
+    translateY(-12px)
+    scale(1.03);
+
+  border:
+    1px solid rgba(0,229,255,0.4);
+
+  box-shadow:
+    0 0 35px rgba(0,229,255,0.25),
+    0 0 65px rgba(139,92,246,0.2);
+}
+
+.product-card img,
+.admin-product-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 22px;
+
+  transition:
+    transform 0.5s ease,
+    filter 0.5s ease;
+}
+
+.product-card:hover img {
+  transform: scale(1.08);
+  filter: brightness(1.08);
+}
+
+.product-card h3 {
+  margin-top: 18px;
+  font-size: 24px;
+  color: white;
+}
+
+.product-card p {
+  color: #aab4d4;
+  line-height: 1.6;
+}
+
+.product-card button {
+  margin-top: 12px;
 }
 
 .product-card:hover {
