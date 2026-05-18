@@ -1548,53 +1548,42 @@ button:hover,
 }
 @media (max-width: 768px) {
   body {
-    overflow-x: hidden;
+    overflow-x: auto;
   }
 
   .app {
-    zoom: 0.72;
+    min-width: 1180px;
+    transform: scale(0.48);
+    transform-origin: top left;
+    width: 208%;
   }
 
   .navbar {
-    width: 92%;
-    margin: 20px auto;
-    padding: 14px 18px;
-
+    width: 1080px;
+    margin: 18px 40px;
     flex-direction: row !important;
+    flex-wrap: nowrap !important;
+  }
 
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 12px;
+  .navbar h1 {
+    display: block !important;
+    font-size: 22px;
   }
 
   .navbar ul {
     flex-wrap: nowrap !important;
-
-    gap: 18px;
   }
 
-  .nav-actions {
+  .nav-actions,
+  .profile-box {
     flex-wrap: nowrap !important;
   }
 
-  .products-grid,
-  .orders-grid {
-    grid-template-columns:
-      repeat(2, 1fr);
+  .activity-feed {
+    right: 60px;
   }
 
-  .activity-feed,
   .xp-system {
-    transform: scale(0.82);
-
-    transform-origin: bottom;
-  }
-
-  .nexus-ai-panel {
-    transform: scale(0.88);
-
-    transform-origin: bottom right;
+    left: 40px;
   }
 }
