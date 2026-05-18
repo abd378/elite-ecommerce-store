@@ -88,10 +88,27 @@ function AdminOrders() {
                   : "No date"}
               </p>
 
-              {order.items && (
-                <div>
+              {order.items && Array.isArray(order.items) && (
+                <div className="admin-order-items">
                   <strong>Items:</strong>
-                  <pre>{JSON.stringify(order.items, null, 2)}</pre>
+
+                  <div className="admin-items-grid">
+                    {order.items.map((item, index) => (
+                      <div className="admin-item-card" key={index}>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="admin-product-img"
+                        />
+
+                        <h4>{item.name}</h4>
+
+                        <p>${item.price}</p>
+
+                        <span>Qty: {item.quantity}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
