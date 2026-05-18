@@ -618,3 +618,124 @@ button:hover,
     display: none;
   }
 }
+.nexus-ai-button {
+  position: fixed;
+  right: 26px;
+  bottom: 26px;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  z-index: 999999;
+  background: linear-gradient(135deg, #00e5ff, #8b5cf6, #ff2bd6);
+  box-shadow: 0 0 35px rgba(0, 229, 255, 0.7);
+}
+
+.nexus-ai-panel {
+  position: fixed;
+  right: 26px;
+  bottom: 110px;
+  width: 380px;
+  height: 520px;
+  z-index: 999999;
+  border-radius: 28px;
+  background: rgba(5, 8, 22, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(22px);
+  box-shadow: 0 0 60px rgba(0, 229, 255, 0.35);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.nexus-ai-header {
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.nexus-ai-header h3 {
+  margin: 0;
+}
+
+.nexus-ai-header p {
+  margin: 4px 0 0;
+  color: #aab4d4;
+  font-size: 13px;
+}
+
+.nexus-ai-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  padding: 0;
+  font-size: 22px;
+  background: rgba(239, 68, 68, 0.85);
+}
+
+.nexus-ai-messages {
+  flex: 1;
+  padding: 18px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nexus-msg {
+  max-width: 82%;
+  padding: 13px 15px;
+  border-radius: 18px;
+  line-height: 1.5;
+}
+
+.nexus-msg.ai {
+  align-self: flex-start;
+  background: rgba(0, 229, 255, 0.14);
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.nexus-msg.user {
+  align-self: flex-end;
+  background: rgba(139, 92, 246, 0.24);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+}
+
+.nexus-ai-input {
+  padding: 16px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.nexus-ai-input input {
+  flex: 1;
+  padding: 13px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.08);
+  color: white;
+  outline: none;
+}
+
+.nexus-ai-input button {
+  padding: 12px 16px;
+}
+
+@media (max-width: 520px) {
+  .nexus-ai-panel {
+    width: calc(100% - 24px);
+    right: 12px;
+    bottom: 96px;
+  }
+
+  .nexus-ai-button {
+    right: 18px;
+    bottom: 18px;
+  }
+}

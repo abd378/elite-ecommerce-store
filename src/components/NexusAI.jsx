@@ -2,51 +2,36 @@ import { useState } from "react";
 
 function NexusAI() {
   const [open, setOpen] = useState(false);
+  const [input, setInput] = useState("");
 
   const [messages, setMessages] = useState([
     {
       role: "ai",
-      text: "👋 Welcome to Nexus AI. Ask me anything.",
+      text: "👋 Welcome to Nexus AI. Ask me about products, orders, or recommendations.",
     },
   ]);
-
-  const [input, setInput] = useState("");
 
   const handleSend = () => {
     if (!input.trim()) return;
 
-    const userMessage = {
-      role: "user",
-      text: input,
-    };
+    const text = input.trim();
 
-    let aiReply =
-      "🤖 Nexus AI is learning. Smart recommendations coming soon.";
+    let reply = "🤖 I can help you explore products and choose the best option.";
 
-    const lower = input.toLowerCase();
-
-    if (lower.includes("perfume")) {
-      aiReply =
-        "✨ Luxury perfumes are trending now.";
-    }
-
-    if (lower.includes("gaming")) {
-      aiReply =
-        "🎮 Gaming products section is highly active.";
-    }
-
-    if (lower.includes("cheap")) {
-      aiReply =
-        "💰 Budget friendly products are available.";
+    if (text.toLowerCase().includes("perfume")) {
+      reply = "✨ I recommend checking luxury perfumes and premium scents.";
+    } else if (text.toLowerCase().includes("gaming")) {
+      reply = "🎮 Gaming products are perfect for a modern setup.";
+    } else if (text.toLowerCase().includes("order")) {
+      reply = "📦 You can track orders from the admin dashboard.";
+    } else if (text.toLowerCase().includes("cheap")) {
+      reply = "💰 I can help you find budget-friendly products.";
     }
 
     setMessages((prev) => [
       ...prev,
-      userMessage,
-      {
-        role: "ai",
-        text: aiReply,
-      },
+      { role: "user", text },
+      { role: "ai", text: reply },
     ]);
 
     setInput("");
@@ -55,8 +40,9 @@ function NexusAI() {
   return (
     <>
       <button
+        type="button"
         className="nexus-ai-button"
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpen((prev) => !prev)}
       >
         🤖
       </button>
@@ -64,17 +50,23 @@ function NexusAI() {
       {open && (
         <div className="nexus-ai-panel">
           <div className="nexus-ai-header">
-            <h3>Nexus AI</h3>
+            <div>
+              <h3>Nexus AI</h3>
+              <p>Smart shopping assistant</p>
+            </div>
 
-            <span>ONLINE</span>
+            <button
+              type="button"
+              className="nexus-ai-close"
+              onClick={() => setOpen(false)}
+            >
+              ×
+            </button>
           </div>
 
           <div className="nexus-ai-messages">
             {messages.map((msg, index) => (
-              <div
-                key={index}
-                className={`nexus-msg ${msg.role}`}
-              >
+              <div key={index} className={`nexus-msg ${msg.role}`}>
                 {msg.text}
               </div>
             ))}
@@ -82,15 +74,15 @@ function NexusAI() {
 
           <div className="nexus-ai-input">
             <input
-              type="text"
-              placeholder="Ask Nexus AI..."
               value={input}
-              onChange={(e) =>
-                setInput(e.target.value)
-              }
+              placeholder="Ask Nexus AI..."
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSend();
+              }}
             />
 
-            <button onClick={handleSend}>
+            <button type="button" onClick={handleSend}>
               Send
             </button>
           </div>
