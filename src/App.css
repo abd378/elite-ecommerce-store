@@ -739,3 +739,48 @@ button:hover,
     bottom: 18px;
   }
 }
+.css-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.css-particles span {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00e5ff;
+  left: calc((var(--i) * 7) * 1%);
+  top: calc((var(--i) * 3) * 1%);
+  box-shadow:
+    0 0 10px #00e5ff,
+    0 0 20px #8b5cf6;
+  animation: particleMove 12s linear infinite;
+}
+
+.css-particles span:nth-child(2n) {
+  background: #8b5cf6;
+}
+
+.css-particles span:nth-child(3n) {
+  background: #ff2bd6;
+}
+
+@keyframes particleMove {
+  0% {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100vh);
+    opacity: 0;
+  }
+}
