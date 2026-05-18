@@ -16,7 +16,88 @@ function NexusAI() {
 
     const text = input.trim();
 
-    let reply = "🤖 I can help you explore products and choose the best option.";
+    let reply = "";
+
+const lower = text.toLowerCase();
+
+if (
+  lower.includes("hello") ||
+  lower.includes("hi")
+) {
+  reply =
+    "👋 Welcome back to Nexus X.";
+}
+
+else if (
+  lower.includes("perfume")
+) {
+  reply =
+    "✨ Luxury perfumes are trending now inside the platform.";
+}
+
+else if (
+  lower.includes("gaming")
+) {
+  reply =
+    "🎮 Gaming products are one of the hottest categories.";
+}
+
+else if (
+  lower.includes("cheap")
+) {
+  reply =
+    "💰 I found budget-friendly products for you.";
+}
+
+else if (
+  lower.includes("luxury")
+) {
+  reply =
+    "💎 Luxury mode activated. Premium products recommended.";
+}
+
+else if (
+  lower.includes("phone")
+) {
+  reply =
+    "📱 Smart devices and accessories are available.";
+}
+
+else if (
+  lower.includes("best")
+) {
+  reply =
+    "🔥 The best-rated products are trending now.";
+}
+
+else if (
+  lower.includes("order")
+) {
+  reply =
+    "📦 Orders are processed in realtime through Nexus.";
+}
+
+else if (
+  lower.includes("ai")
+) {
+  reply =
+    "🤖 Nexus AI system is evolving every day.";
+}
+
+else {
+  const randomReplies = [
+    "⚡ Nexus AI is analyzing your request.",
+    "🌌 Future commerce experience activated.",
+    "🚀 Smart recommendations coming soon.",
+    "💡 I can help you discover premium products.",
+    "🧠 Nexus AI is learning from user activity.",
+  ];
+
+  reply =
+    randomReplies[
+      Math.floor(Math.random() * randomReplies.length)
+    ];
+}
 
     if (text.toLowerCase().includes("perfume")) {
       reply = "✨ I recommend checking luxury perfumes and premium scents.";
