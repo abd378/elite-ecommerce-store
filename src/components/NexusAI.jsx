@@ -3,119 +3,53 @@ import { useState } from "react";
 function NexusAI() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [messages, setMessages] = useState([
     {
       role: "ai",
-      text: "👋 Welcome to Nexus AI. Ask me about products, orders, or recommendations.",
+      text: "👋 Welcome to Nexus AI. Ask me anything about products, orders, or shopping.",
     },
   ]);
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+    if (!input.trim() || loading) return;
 
     const text = input.trim();
 
-    let reply = "";
+    setMessages((prev) => [...prev, { role: "user", text }]);
+    setInput("");
+    setLoading(true);
 
-const lower = text.toLowerCase();
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: text }),
+      });
 
-if (
-  lower.includes("hello") ||
-  lower.includes("hi")
-) {
-  reply =
-    "👋 Welcome back to Nexus X.";
-}
+      const data = await res.json();
 
-else if (
-  lower.includes("perfume")
-) {
-  reply =
-    "✨ Luxury perfumes are trending now inside the platform.";
-}
-
-else if (
-  lower.includes("gaming")
-) {
-  reply =
-    "🎮 Gaming products are one of the hottest categories.";
-}
-
-else if (
-  lower.includes("cheap")
-) {
-  reply =
-    "💰 I found budget-friendly products for you.";
-}
-
-else if (
-  lower.includes("luxury")
-) {
-  reply =
-    "💎 Luxury mode activated. Premium products recommended.";
-}
-
-else if (
-  lower.includes("phone")
-) {
-  reply =
-    "📱 Smart devices and accessories are available.";
-}
-
-else if (
-  lower.includes("best")
-) {
-  reply =
-    "🔥 The best-rated products are trending now.";
-}
-
-else if (
-  lower.includes("order")
-) {
-  reply =
-    "📦 Orders are processed in realtime through Nexus.";
-}
-
-else if (
-  lower.includes("ai")
-) {
-  reply =
-    "🤖 Nexus AI system is evolving every day.";
-}
-
-else {
-  const randomReplies = [
-    "⚡ Nexus AI is analyzing your request.",
-    "🌌 Future commerce experience activated.",
-    "🚀 Smart recommendations coming soon.",
-    "💡 I can help you discover premium products.",
-    "🧠 Nexus AI is learning from user activity.",
-  ];
-
-  reply =
-    randomReplies[
-      Math.floor(Math.random() * randomReplies.length)
-    ];
-}
-
-    if (text.toLowerCase().includes("perfume")) {
-      reply = "✨ I recommend checking luxury perfumes and premium scents.";
-    } else if (text.toLowerCase().includes("gaming")) {
-      reply = "🎮 Gaming products are perfect for a modern setup.";
-    } else if (text.toLowerCase().includes("order")) {
-      reply = "📦 You can track orders from the admin dashboard.";
-    } else if (text.toLowerCase().includes("cheap")) {
-      reply = "💰 I can help you find budget-friendly products.";
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          text: data.reply || "I could not answer right now.",
+        },
+      ]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          text: "AI connection error. Try again later.",
+        },
+      ]);
     }
 
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", text },
-      { role: "ai", text: reply },
-    ]);
-
-    setInput("");
+    setLoading(false);
   };
 
   return (
@@ -133,7 +67,7 @@ else {
           <div className="nexus-ai-header">
             <div>
               <h3>Nexus AI</h3>
-              <p>Smart shopping assistant</p>
+              <p>Real AI shopping assistant</p>
             </div>
 
             <button
@@ -151,12 +85,14 @@ else {
                 {msg.text}
               </div>
             ))}
+
+            {loading && <div className="nexus-msg ai">Thinking...</div>}
           </div>
 
           <div className="nexus-ai-input">
             <input
               value={input}
-              placeholder="Ask Nexus AI..."
+              placeholder="Ask anything..."
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") handleSend();
