@@ -15,6 +15,7 @@ import AdminProducts from "./pages/AdminProducts";
 
 import NexusAI from "./components/NexusAI";
 import ParticleBackground from "./components/ParticleBackground";
+import LoadingScreen from "./components/LoadingScreen";
 
 import "./App.css";
 
@@ -30,9 +31,20 @@ function App() {
   });
 
   const [adminNotifications, setAdminNotifications] = useState(0);
+
   const [soundEnabled, setSoundEnabled] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+
   const isAdmin = user?.email === "abedtt5527@gmail.com";
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 3200);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -41,19 +53,25 @@ function App() {
   const enableSound = async () => {
     try {
       const audio = new Audio("/notification.mp3");
+
       audio.volume = 1;
+
       audio.loop = false;
 
       await audio.play();
+
       audio.pause();
+
       audio.currentTime = 0;
 
       window.notificationAudio = audio;
+
       setSoundEnabled(true);
 
       toast.success("🔊 Sound Enabled");
     } catch (error) {
       console.log(error);
+
       toast.error("Browser blocked sound. Click again.");
     }
   };
@@ -64,10 +82,13 @@ function App() {
     try {
       if (window.notificationAudio) {
         window.notificationAudio.currentTime = 0;
+
         window.notificationAudio.play();
       } else {
         const audio = new Audio("/notification.mp3");
+
         audio.volume = 1;
+
         audio.play();
       }
     } catch (error) {
@@ -89,7 +110,9 @@ function App() {
         },
         () => {
           setAdminNotifications((prev) => prev + 1);
+
           playNotificationSound();
+
           toast.success("🔔 New Order Received!");
         }
       )
@@ -103,34 +126,53 @@ function App() {
   const addToCart = (product) => {
     if (!user) {
       toast.error("Please login first");
+
       return;
     }
 
-    const existingProduct = cart.find((item) => item.id === product.id);
+    const existingProduct = cart.find(
+      (item) => item.id === product.id
+    );
 
     if (existingProduct) {
       setCart(
         cart.map((item) =>
           item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+              }
             : item
         )
       );
     } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
+      setCart([
+        ...cart,
+        {
+          ...product,
+          quantity: 1,
+        },
+      ]);
     }
 
     toast.success(`${product.name} added to cart`);
   };
 
   const removeFromCart = (id) => {
-    setCart(cart.filter((item) => item.id !== id));
+    setCart(
+      cart.filter((item) => item.id !== id)
+    );
   };
 
   const increaseQuantity = (id) => {
     setCart(
       cart.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === id
+          ? {
+              ...item,
+              quantity: item.quantity + 1,
+            }
+          : item
       )
     );
   };
@@ -139,7 +181,12 @@ function App() {
     setCart(
       cart
         .map((item) =>
-          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+          item.id === id
+            ? {
+                ...item,
+                quantity: item.quantity - 1,
+              }
+            : item
         )
         .filter((item) => item.quantity > 0)
     );
@@ -147,6 +194,7 @@ function App() {
 
   const clearCart = () => {
     setCart([]);
+
     localStorage.removeItem("cart");
   };
 
@@ -154,17 +202,28 @@ function App() {
     await supabase.auth.signOut();
 
     localStorage.removeItem("user");
+
     localStorage.removeItem("cart");
 
     setUser(null);
+
     setCart([]);
+
     setAdminNotifications(0);
+
     setSoundEnabled(false);
 
     toast.success("Logged out");
   };
 
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const cartCount = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <BrowserRouter>
@@ -182,7 +241,9 @@ function App() {
             </li>
 
             <li>
-              <Link to="/products">Products</Link>
+              <Link to="/products">
+                Products
+              </Link>
             </li>
 
             <li>
@@ -194,9 +255,12 @@ function App() {
                 <li>
                   <Link
                     to="/admin-orders"
-                    onClick={() => setAdminNotifications(0)}
+                    onClick={() =>
+                      setAdminNotifications(0)
+                    }
                   >
                     Orders
+
                     {adminNotifications > 0 && (
                       <span className="notification-badge">
                         {adminNotifications}
@@ -206,7 +270,9 @@ function App() {
                 </li>
 
                 <li>
-                  <Link to="/admin-products">Products Admin</Link>
+                  <Link to="/admin-products">
+                    Products Admin
+                  </Link>
                 </li>
               </>
             )}
@@ -216,7 +282,9 @@ function App() {
             {user ? (
               <div className="profile-box">
                 <div className="profile-icon">
-                  {user.name?.charAt(0).toUpperCase() || "U"}
+                  {user.name
+                    ?.charAt(0)
+                    .toUpperCase() || "U"}
                 </div>
 
                 <span>{user.name}</span>
@@ -229,44 +297,65 @@ function App() {
                       padding: "10px 14px",
                       border: "none",
                       borderRadius: "10px",
-                      background: soundEnabled ? "green" : "orange",
+                      background:
+                        soundEnabled
+                          ? "green"
+                          : "orange",
                       color: "white",
                       fontWeight: "bold",
                       cursor: "pointer",
                     }}
                   >
-                    {soundEnabled ? "🔊 Sound On" : "🔔 Enable Sound"}
+                    {soundEnabled
+                      ? "🔊 Sound On"
+                      : "🔔 Enable Sound"}
                   </button>
                 )}
 
-                <button onClick={logout} className="logout-btn">
+                <button
+                  onClick={logout}
+                  className="logout-btn"
+                >
                   Logout
                 </button>
               </div>
             ) : (
               <>
                 <Link to="/login">
-                  <button className="cart-btn">Login</button>
+                  <button className="cart-btn">
+                    Login
+                  </button>
                 </Link>
 
                 <Link to="/register">
-                  <button className="cart-btn">Register</button>
+                  <button className="cart-btn">
+                    Register
+                  </button>
                 </Link>
               </>
             )}
 
             <Link to="/cart">
-              <button className="cart-btn">Cart ({cartCount})</button>
+              <button className="cart-btn">
+                Cart ({cartCount})
+              </button>
             </Link>
           </div>
         </nav>
 
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={<Home />}
+          />
 
           <Route
             path="/products"
-            element={<Products addToCart={addToCart} />}
+            element={
+              <Products
+                addToCart={addToCart}
+              />
+            }
           />
 
           <Route
@@ -276,37 +365,69 @@ function App() {
                 cart={cart}
                 user={user}
                 removeFromCart={removeFromCart}
-                increaseQuantity={increaseQuantity}
-                decreaseQuantity={decreaseQuantity}
+                increaseQuantity={
+                  increaseQuantity
+                }
+                decreaseQuantity={
+                  decreaseQuantity
+                }
                 clearCart={clearCart}
               />
             }
           />
 
-          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route
+            path="/login"
+            element={
+              <Login setUser={setUser} />
+            }
+          />
 
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/register"
+            element={<Register />}
+          />
 
           <Route
             path="/product/:id"
-            element={<ProductDetails addToCart={addToCart} />}
+            element={
+              <ProductDetails
+                addToCart={addToCart}
+              />
+            }
           />
 
           <Route
             path="/checkout"
             element={
-              <Checkout cart={cart} clearCart={clearCart} user={user} />
+              <Checkout
+                cart={cart}
+                clearCart={clearCart}
+                user={user}
+              />
             }
           />
 
           <Route
             path="/admin-orders"
-            element={isAdmin ? <AdminOrders /> : <h2>Access Denied</h2>}
+            element={
+              isAdmin ? (
+                <AdminOrders />
+              ) : (
+                <h2>Access Denied</h2>
+              )
+            }
           />
 
           <Route
             path="/admin-products"
-            element={isAdmin ? <AdminProducts /> : <h2>Access Denied</h2>}
+            element={
+              isAdmin ? (
+                <AdminProducts />
+              ) : (
+                <h2>Access Denied</h2>
+              )
+            }
           />
         </Routes>
 
