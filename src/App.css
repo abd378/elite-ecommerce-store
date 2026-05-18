@@ -1109,3 +1109,13 @@ button:hover,
     display: none;
   }
 }
+.activity-item {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.activity-item:hover {
+  transform: translateX(-6px) scale(1.02);
+  background: rgba(0, 229, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.35);
+}
