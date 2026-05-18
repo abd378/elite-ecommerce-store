@@ -8,12 +8,25 @@ window.OneSignalDeferred = window.OneSignalDeferred || [];
 window.OneSignalDeferred.push(async function (OneSignal) {
   await OneSignal.init({
     appId: "d0c25769-48c3-4bfc-a279-c9a3cad3a442",
+
     serviceWorkerPath: "OneSignalSDKWorker.js",
-    serviceWorkerUpdaterPath: "OneSignalSDKUpdaterWorker.js",
+
+    serviceWorkerUpdaterPath:
+      "OneSignalSDKUpdaterWorker.js",
+
     notifyButton: {
       enable: true,
     },
+
+    promptOptions: {
+      slidedown: {
+        enabled: true,
+        autoPrompt: true,
+      },
+    },
   });
+
+  OneSignal.showSlidedownPrompt();
 });
 
 ReactDOM.createRoot(document.getElementById("root")).render(
