@@ -17,6 +17,7 @@ import NexusAI from "./components/NexusAI";
 import ParticleBackground from "./components/ParticleBackground";
 import LoadingScreen from "./components/LoadingScreen";
 import ActivityFeed from "./components/ActivityFeed";
+import XPSystem from "./components/XPSystem";
 
 import "./App.css";
 
@@ -209,9 +210,7 @@ function App() {
                   </Link>
                 </li>
 
-                <li>
-                  <Link to="/admin-products">Products Admin</Link>
-                </li>
+                <li><Link to="/admin-products">Products Admin</Link></li>
               </>
             )}
           </ul>
@@ -267,7 +266,11 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products addToCart={addToCart} />} />
+
+          <Route
+            path="/products"
+            element={<Products addToCart={addToCart} />}
+          />
 
           <Route
             path="/cart"
@@ -308,6 +311,7 @@ function App() {
         </Routes>
 
         <ActivityFeed />
+        <XPSystem user={user} />
         <NexusAI />
       </div>
     </BrowserRouter>

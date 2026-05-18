@@ -1394,3 +1394,155 @@ button:hover,
 .no-results h2 {
   color: white;
 }
+.xp-system {
+  position: fixed;
+
+  left: 24px;
+  bottom: 24px;
+
+  width: 320px;
+
+  z-index: 999;
+
+  padding: 22px;
+
+  border-radius: 28px;
+
+  background:
+    rgba(5,8,22,0.88);
+
+  border:
+    1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 0 35px rgba(139,92,246,0.2);
+}
+
+.xp-header {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+}
+
+.xp-header h3 {
+  color: #00e5ff;
+
+  letter-spacing: 2px;
+
+  font-size: 14px;
+}
+
+.xp-header span {
+  padding: 6px 14px;
+
+  border-radius: 999px;
+
+  background:
+    rgba(255,43,214,0.16);
+
+  color: #ff2bd6;
+
+  font-size: 12px;
+
+  font-weight: bold;
+}
+
+.xp-user {
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  margin-top: 22px;
+}
+
+.xp-avatar {
+  width: 70px;
+  height: 70px;
+
+  border-radius: 50%;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #00e5ff,
+      #8b5cf6
+    );
+
+  color: white;
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  box-shadow:
+    0 0 24px rgba(0,229,255,0.35);
+}
+
+.xp-user h2 {
+  color: white;
+  margin: 0;
+}
+
+.xp-user p {
+  color: #aab4d4;
+}
+
+.xp-bar {
+  margin-top: 24px;
+
+  width: 100%;
+
+  height: 14px;
+
+  border-radius: 999px;
+
+  overflow: hidden;
+
+  background:
+    rgba(255,255,255,0.08);
+}
+
+.xp-fill {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background:
+    linear-gradient(
+      90deg,
+      #00e5ff,
+      #8b5cf6,
+      #ff2bd6
+    );
+
+  box-shadow:
+    0 0 18px rgba(0,229,255,0.35);
+}
+
+.xp-stats {
+  display: flex;
+
+  justify-content: space-between;
+
+  margin-top: 12px;
+
+  color: #dbe4ff;
+}
+
+@media (max-width: 1000px) {
+  .xp-system {
+    display: none;
+  }
+}
