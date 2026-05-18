@@ -12,6 +12,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Checkout from "./pages/Checkout";
 import AdminOrders from "./pages/AdminOrders";
 import AdminProducts from "./pages/AdminProducts";
+import NexusAI from "./components/NexusAI";
 
 import "./App.css";
 
@@ -172,25 +173,14 @@ function App() {
           <h1>CodeAlpha Store</h1>
 
           <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-
-            <li>
-              <Link to="/products">Products</Link>
-            </li>
-
-            <li>
-              <Link to="/cart">Cart</Link>
-            </li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/products">Products</Link></li>
+            <li><Link to="/cart">Cart</Link></li>
 
             {isAdmin && (
               <>
                 <li>
-                  <Link
-                    to="/admin-orders"
-                    onClick={() => setAdminNotifications(0)}
-                  >
+                  <Link to="/admin-orders" onClick={() => setAdminNotifications(0)}>
                     Orders
                     {adminNotifications > 0 && (
                       <span className="notification-badge">
@@ -258,11 +248,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
-
-          <Route
-            path="/products"
-            element={<Products addToCart={addToCart} />}
-          />
+          <Route path="/products" element={<Products addToCart={addToCart} />} />
 
           <Route
             path="/cart"
@@ -279,7 +265,6 @@ function App() {
           />
 
           <Route path="/login" element={<Login setUser={setUser} />} />
-
           <Route path="/register" element={<Register />} />
 
           <Route
@@ -289,9 +274,7 @@ function App() {
 
           <Route
             path="/checkout"
-            element={
-              <Checkout cart={cart} clearCart={clearCart} user={user} />
-            }
+            element={<Checkout cart={cart} clearCart={clearCart} user={user} />}
           />
 
           <Route
@@ -304,6 +287,8 @@ function App() {
             element={isAdmin ? <AdminProducts /> : <h2>Access Denied</h2>}
           />
         </Routes>
+
+        <NexusAI />
       </div>
     </BrowserRouter>
   );
