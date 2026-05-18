@@ -1338,3 +1338,59 @@ button:hover,
   color: #dbe4ff;
   font-size: 13px;
 }
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.futuristic-search {
+  width: 420px;
+
+  padding: 18px 24px;
+
+  border-radius: 18px;
+
+  border:
+    1px solid rgba(0,229,255,0.25);
+
+  background:
+    rgba(255,255,255,0.06);
+
+  backdrop-filter: blur(14px);
+
+  color: white;
+
+  font-size: 17px;
+
+  outline: none;
+
+  transition: 0.4s;
+
+  box-shadow:
+    0 0 25px rgba(0,229,255,0.12);
+}
+
+.futuristic-search:focus {
+  transform: scale(1.03);
+
+  border:
+    1px solid #00e5ff;
+
+  box-shadow:
+    0 0 35px rgba(0,229,255,0.35),
+    0 0 60px rgba(139,92,246,0.22);
+}
+
+.futuristic-search::placeholder {
+  color: #aab4d4;
+}
+
+.no-results {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.no-results h2 {
+  color: white;
+}

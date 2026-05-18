@@ -1,74 +1,72 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { products } from "../data/products";
 import { Link } from "react-router-dom";
-import { supabase } from "../supabaseClient";
 
 function Products({ addToCart }) {
-  const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
 
-  useEffect(() => {
-    getProducts();
-  }, []);
-
-  const getProducts = async () => {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("id", { ascending: true });
-
-    if (!error) setProducts(data);
-  };
-
-  const filteredProducts = products.filter((product) => {
-    const matchSearch = product.name.toLowerCase().includes(search.toLowerCase());
-    const matchCategory = category === "All" || product.category === category;
-    return matchSearch && matchCategory;
-  });
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <section className="products-section">
-      <h2 className="section-title">Featured Products</h2>
-
-      <div className="search-box">
+    <div className="products-page">
+      <div className="search-container">
         <input
           type="text"
-          placeholder="Search for products..."
+          placeholder="Search futuristic products..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) =>
+            setSearch(e.target.value)
+          }
+          className="futuristic-search"
         />
-      </div>
-
-      <div className="filter-buttons">
-        {["All", "Beauty", "Accessories", "Electronics", "Fashion", "Furniture", "Home"].map((item) => (
-          <button
-            key={item}
-            className={category === item ? "active-filter" : ""}
-            onClick={() => setCategory(item)}
-          >
-            {item}
-          </button>
-        ))}
       </div>
 
       <div className="products-grid">
         {filteredProducts.map((product) => (
-          <div className="product-card" key={product.id}>
-            <img src={product.image} alt={product.name} />
+          <div
+            className="product-card"
+            key={product.id}
+          >
+            <img
+              src={product.image}
+              alt={product.name}
+            />
 
             <h3>{product.name}</h3>
-            <span className="category-badge">{product.category}</span>
+
+            <span className="product-category">
+              {product.category}
+            </span>
+
             <p>${product.price}</p>
 
-            <button onClick={() => addToCart(product)}>Add To Cart</button>
+            <div className="product-buttons">
+              <button
+                onClick={() =>
+                  addToCart(product)
+                }
+              >
+                Add To Cart
+              </button>
 
-            <Link to="/product">
-              <button className="details-btn">View Details</button>
-            </Link>
+              <Link to={`/product/${product.id}`}>
+                <button className="details-btn">
+                  View Details
+                </button>
+              </Link>
+            </div>
           </div>
         ))}
       </div>
-    </section>
+
+      {filteredProducts.length === 0 && (
+        <div className="no-results">
+          <h2>No futuristic products found</h2>
+        </div>
+      )}
+    </div>
   );
 }
 
