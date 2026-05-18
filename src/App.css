@@ -1119,3 +1119,93 @@ button:hover,
   background: rgba(0, 229, 255, 0.12);
   border-color: rgba(0, 229, 255, 0.35);
 }
+.cyber-stats-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 22px;
+
+  margin-bottom: 40px;
+}
+
+.cyber-stat-card {
+  position: relative;
+
+  overflow: hidden;
+
+  padding: 28px;
+
+  border-radius: 28px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,0.08),
+      rgba(255,255,255,0.03)
+    );
+
+  border:
+    1px solid rgba(255,255,255,0.1);
+
+  backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 0 30px rgba(0,0,0,0.3);
+
+  transition:
+    transform 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.cyber-stat-card::before {
+  content: "";
+
+  position: absolute;
+
+  inset: -100%;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent,
+      var(--glow),
+      transparent
+    );
+
+  opacity: 0.18;
+
+  transition: 0.7s;
+}
+
+.cyber-stat-card:hover::before {
+  inset: 100%;
+}
+
+.cyber-stat-card:hover {
+  transform:
+    translateY(-10px)
+    scale(1.03);
+
+  box-shadow:
+    0 0 35px var(--glow);
+}
+
+.cyber-stat-card span {
+  color: #aab4d4;
+
+  font-size: 13px;
+
+  letter-spacing: 2px;
+
+  font-weight: 800;
+}
+
+.cyber-stat-card h2 {
+  margin-top: 14px;
+
+  font-size: 42px;
+
+  color: white;
+}

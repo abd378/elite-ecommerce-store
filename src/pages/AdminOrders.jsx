@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import CyberStats from "../components/CyberStats";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
     const { data, error } = await supabase
@@ -10,25 +12,29 @@ function AdminOrders() {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (!error) {
-      setOrders(data);
+    if (error) {
+      console.log(error);
+      setOrders([]);
+    } else {
+      setOrders(data || []);
     }
+
+    setLoading(false);
   };
 
   useEffect(() => {
     fetchOrders();
 
     const channel = supabase
-      .channel("orders-channel")
+      .channel("orders-admin-page")
       .on(
         "postgres_changes",
         {
-          event: "INSERT",
+          event: "*",
           schema: "public",
           table: "orders",
         },
         () => {
-          alert("New order received!");
           fetchOrders();
         }
       )
@@ -41,11 +47,18 @@ function AdminOrders() {
 
   return (
     <div className="admin-page">
-      <h2>Admin Orders Dashboard</h2>
+      <h2 className="section-title">Admin Command Center</h2>
 
-      {orders.length === 0 ? (
+      <CyberStats />
+
+      <h3 className="section-title">Realtime Orders</h3>
+
+      {loading ? (
+        <p>Loading orders...</p>
+      ) : orders.length === 0 ? (
         <div className="cart-box">
-          <p>No orders yet.</p>
+          <h2>No Orders Yet</h2>
+          <p>Orders will appear here in realtime.</p>
         </div>
       ) : (
         <div className="orders-grid">
@@ -53,22 +66,34 @@ function AdminOrders() {
             <div className="order-card" key={order.id}>
               <h3>Order #{order.id}</h3>
 
-              <p><b>Name:</b> {order.user_name}</p>
-              <p><b>Email:</b> {order.user_email}</p>
-              <p><b>Phone:</b> {order.phone}</p>
-              <p><b>City:</b> {order.city}</p>
-              <p><b>Address:</b> {order.address}</p>
+              <p>
+                <strong>User:</strong>{" "}
+                {order.user_email || order.email || "Unknown User"}
+              </p>
 
-              <div className="order-products">
-                <b>Products:</b>
-                {order.items?.map((item) => (
-                  <p key={item.id}>
-                    {item.name} × {item.quantity}
-                  </p>
-                ))}
-              </div>
+              <p>
+                <strong>Total:</strong>{" "}
+                ${order.total || order.total_price || "0"}
+              </p>
 
-              <h4>Total: ${order.total}</h4>
+              <p>
+                <strong>Status:</strong>{" "}
+                {order.status || "Pending"}
+              </p>
+
+              <p>
+                <strong>Date:</strong>{" "}
+                {order.created_at
+                  ? new Date(order.created_at).toLocaleString()
+                  : "No date"}
+              </p>
+
+              {order.items && (
+                <div>
+                  <strong>Items:</strong>
+                  <pre>{JSON.stringify(order.items, null, 2)}</pre>
+                </div>
+              )}
             </div>
           ))}
         </div>
