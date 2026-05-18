@@ -6,7 +6,9 @@ function Home() {
       <div className="nexus-orb"></div>
 
       <div className="nexus-hero-card">
-        <span className="nexus-badge">NEXUS X • AI COMMERCE PLATFORM</span>
+        <span className="nexus-badge">
+          NEXUS X • AI COMMERCE PLATFORM
+        </span>
 
         <h1>
           Welcome to the Future of
@@ -23,8 +25,10 @@ function Home() {
             <button>Explore Products</button>
           </Link>
 
-          <Link to="/login">
-            <button className="nexus-secondary">Enter Platform</button>
+          <Link to="/products">
+            <button className="nexus-secondary">
+              Enter Platform
+            </button>
           </Link>
         </div>
 
