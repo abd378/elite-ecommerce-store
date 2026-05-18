@@ -23,7 +23,7 @@ export default async function handler(req, res) {
             {
               role: "system",
               content:
-                "You are Nexus AI, a futuristic shopping assistant for CodeAlpha Ecommerce Store.",
+                "You are Nexus AI, a futuristic smart shopping assistant for CodeAlpha Ecommerce Store. Answer all user questions clearly and naturally.",
             },
 
             {
@@ -31,18 +31,33 @@ export default async function handler(req, res) {
               content: message,
             },
           ],
+
+          temperature: 0.7,
+
+          max_tokens: 500,
         }),
       }
     );
 
     const data = await response.json();
 
+    console.log(data);
+
+    if (!response.ok) {
+      return res.status(500).json({
+        reply:
+          data.error?.message ||
+          "Groq API error.",
+      });
+    }
+
     return res.status(200).json({
       reply:
-        data.choices?.[0]?.message?.content ||
-        "AI could not answer.",
+        data.choices[0].message.content,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       reply: "AI server error.",
     });
